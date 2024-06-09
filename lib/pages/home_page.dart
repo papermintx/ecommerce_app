@@ -49,11 +49,11 @@ class _HomePageState extends State<HomePage> {
 
           if (state is ProductLoaded) {
             return GridView.builder(
-              padding: const EdgeInsets.all(8),
+              padding:  EdgeInsets.symmetric(horizontal: 8.w, vertical:  8.h),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisSpacing: 8.h,
                 crossAxisSpacing: 8.w,
-                childAspectRatio: 2.14 / 2.2,
+                childAspectRatio: 1.6/1.3,
                 crossAxisCount: 2,
               ),
               itemCount: state.products.length,
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 8),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         decoration: const BoxDecoration(
                           boxShadow: [
                             BoxShadow(
@@ -92,20 +92,24 @@ class _HomePageState extends State<HomePage> {
                               bottomRight: Radius.circular(8)),
                         ),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               product.title,
-                              textAlign: TextAlign.center,
+                              // textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
                                 color: Colors.white,
+                                fontSize: 10,
                               ),
                             ),
                             Text(
                               '\$${product.price}',
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
+                              style: GoogleFonts.poppins(
+                                color: Colors.blue,
+                                fontSize : 10,
+                                
                               ),
                             ),
                           ],
