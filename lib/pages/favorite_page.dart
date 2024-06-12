@@ -14,38 +14,20 @@ class _FavoritePageState extends State<FavoritePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<FavoriteBloc>().add(LoadFavorite());
+    context.read<FavoriteBloc>().add(LoadFavoriteFromDatabase());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          'Favorite',
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue, Colors.purple],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        title: const Text('Favorite'),
       ),
       body: BlocBuilder<FavoriteBloc, FavoriteState>(
         builder: (context, state) {
           if (state is FavoriteLoading) {
             return const Center(
               child: CircularProgressIndicator(),
-            );
-          }
-
-          if (state is FavoriteError) {
-            return Center(
-              child: Text(state.message),
             );
           }
 
@@ -56,17 +38,23 @@ class _FavoritePageState extends State<FavoritePage> {
                 final product = state.products[index];
                 return ListTile(
                   title: Text(product.title),
-                  subtitle: Text(product.price.toString()),
+                  subtitle: Text(product.description),
                   trailing: IconButton(
                     onPressed: () {
-                      context.read<FavoriteBloc>().add(
-                            RemoveFavorite(product: product),
-                          );
+                      context
+                          .read<FavoriteBloc>()
+                          .add(RemoveFavorite(product: product));
                     },
                     icon: const Icon(Icons.delete),
                   ),
                 );
               },
+            );
+          }
+
+          if (state is FavoriteError) {
+            return Center(
+              child: Text(state.message),
             );
           }
           return const SizedBox.shrink();

@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<ProductBloc>().add(LoadProduct());
+    context.read<ProductBloc>().add(LoadProductFromApi());
   }
 
   @override

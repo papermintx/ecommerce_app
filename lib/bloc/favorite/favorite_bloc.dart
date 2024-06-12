@@ -1,55 +1,50 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_apps/database/database_helper_favorite.dart';
+import 'package:e_apps/database/product_databas_helper.dart';
 import 'package:e_apps/models/product_model.dart';
-import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 
 part 'favorite_event.dart';
 part 'favorite_state.dart';
 
 class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   FavoriteBloc() : super(FavoriteInitial()) {
-    on<AddFavorite>((event, emit) async {
+    on<LoadFavoriteFromDatabase>((event, emit) async {
       emit(FavoriteLoading());
       try {
-        await DatabaseHelperFavorite.instance.insert(event.product.toJson());
-        final data = await DatabaseHelperFavorite.instance.queryAllRows();
-        List<ProductModel> products =
-            data.map((e) => ProductModel.fromJson(e)).toList();
-        emit(FavoriteLoaded(products: products));
+        final database = DatabaseHelper.instance;
+        final products = await database.queryAllProducts();
+        final List<ProductModel> data = products
+            .where((e) => e['isFavorite'] != 0)
+            .map((e) => ProductModel(
+                  id: e['id'],
+                  title: e['title'],
+                  price: e['price'],
+                  description: e['description'],
+                  category: e['category'],
+                  image: e['image'],
+                  rating: Rating(
+                    rate: e['rating_rate'],
+                    count: e['rating_count'],
+                  ),
+                  isFavorite: e['isFavorite'] == 1,
+                ))
+            .toList();
+        emit(FavoriteLoaded(products: data));
       } catch (e) {
-        emit(FavoriteError(
-            message: 'Gagal menambahkan produk ke favorit ${e.toString()}'));
+        emit(FavoriteError(message: e.toString()));
       }
     });
 
-    on<LoadFavorite>((event, emit) async {
-      emit(FavoriteLoading());
-      try {
-        final data = await DatabaseHelperFavorite.instance.queryAllRows();
-        List<ProductModel> products =
-            data.map((e) => ProductModel.fromJson(e)).toList();
-
-        products.isEmpty
-            ? emit(FavoriteError(message: 'Tidak ada produk favorit'))
-            : emit(FavoriteLoaded(products: products));
-      } catch (e) {
-        emit(FavoriteError(
-            message: 'Gagal memuat produk favorit ${e.toString()}'));
-      }
+    on<AddFavorite>((event, emit) async {
+      final database = DatabaseHelper.instance;
+      await database.updateProduct(event.product.copyWith(isFavorite: true));
+      add(LoadFavoriteFromDatabase());
     });
 
     on<RemoveFavorite>((event, emit) async {
-      emit(FavoriteLoading());
-      try {
-        await DatabaseHelperFavorite.instance.delete(event.product.id);
-        final data = await DatabaseHelperFavorite.instance.queryAllRows();
-        List<ProductModel> products =
-            data.map((e) => ProductModel.fromJson(e)).toList();
-        emit(FavoriteLoaded(products: products));
-      } catch (e) {
-        emit(FavoriteError(
-            message: 'Gagal menghapus produk favorit ${e.toString()}'));
-      }
+      final database = DatabaseHelper.instance;
+      await database.updateProduct(event.product.copyWith(isFavorite: false));
+      add(LoadFavoriteFromDatabase());
     });
   }
 }

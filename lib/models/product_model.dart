@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 class ProductModel extends Equatable {
@@ -42,9 +43,30 @@ class ProductModel extends Equatable {
       };
 
   @override
-  // TODO: implement props
   List<Object?> get props =>
       [id, title, price, description, category, image, rating];
+
+  ProductModel copyWith({
+    int? id,
+    String? title,
+    double? price,
+    String? description,
+    String? category,
+    String? image,
+    Rating? rating,
+    bool? isFavorite,
+  }) {
+    return ProductModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      price: price ?? this.price,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      image: image ?? this.image,
+      rating: rating ?? this.rating,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
+  }
 }
 
 class Rating {

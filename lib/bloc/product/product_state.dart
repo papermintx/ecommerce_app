@@ -15,6 +15,8 @@ final class ProductLoaded extends ProductState {
   });
 }
 
+final class LoadProductFromApiSucces extends ProductState {}
+
 final class ProductError extends ProductState {
   final String message;
   ProductError({
