@@ -25,15 +25,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
-        leading: Row(
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.login),
-            ),
-          ],
+        centerTitle: true,
+        title: Text(
+          'Home',
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontSize: 16.sp,
+          ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/favorite');
+            },
+            icon: const Icon(
+              Icons.favorite,
+              color: Colors.white,
+            ),
+          ),
+        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

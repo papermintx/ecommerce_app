@@ -1,5 +1,7 @@
 import 'package:e_apps/bloc/auth/authentication_bloc.dart';
+import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
+import 'package:e_apps/pages/favorite_page.dart';
 import 'package:e_apps/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => ProductBloc(),
         ),
+        BlocProvider(create: (context) => FavoriteBloc()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
@@ -30,7 +33,11 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: const HomePage(),
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const HomePage(),
+            '/favorite': (context) => const FavoritePage(),
+          },
         ),
       ),
     );

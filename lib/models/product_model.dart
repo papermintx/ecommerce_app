@@ -1,4 +1,6 @@
-class ProductModel {
+import 'package:equatable/equatable.dart';
+
+class ProductModel extends Equatable {
   int id;
   String title;
   double price;
@@ -6,6 +8,7 @@ class ProductModel {
   String category;
   String image;
   Rating rating;
+  bool isFavorite;
 
   ProductModel({
     required this.id,
@@ -15,6 +18,7 @@ class ProductModel {
     required this.category,
     required this.image,
     required this.rating,
+    this.isFavorite = false,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
@@ -36,6 +40,11 @@ class ProductModel {
         "image": image,
         "rating": rating.toJson(),
       };
+
+  @override
+  // TODO: implement props
+  List<Object?> get props =>
+      [id, title, price, description, category, image, rating];
 }
 
 class Rating {

@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/models/product_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final ProductModel product;
@@ -14,6 +16,15 @@ class ProductDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(product.title),
+        actions: [
+          IconButton(
+            onPressed: () {
+              // Add to favorite
+              context.read<FavoriteBloc>().add(AddFavorite(product: product));
+            },
+            icon: const Icon(Icons.favorite),
+          ),
+        ],
       ),
       body: Column(
         children: [
