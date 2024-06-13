@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_apps/bloc/auth/authentication_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
 import 'package:e_apps/pages/product_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ionicons/ionicons.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +21,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     context.read<ProductBloc>().add(LoadProductFromApi());
+    context.read<AuthenticationBloc>().add(LoadUserData());
   }
 
   @override
@@ -33,13 +36,22 @@ class _HomePageState extends State<HomePage> {
             fontSize: 16.sp,
           ),
         ),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/profilePage');
+          },
+          icon: const Icon(
+            Ionicons.person_circle_outline,
+            color: Colors.white,
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () {
               Navigator.pushNamed(context, '/favorite');
             },
             icon: const Icon(
-              Icons.favorite,
+              Ionicons.list,
               color: Colors.white,
             ),
           ),

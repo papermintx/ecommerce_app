@@ -39,19 +39,10 @@ class _LoginPageState extends State<LoginPage> {
             );
           }
 
-          if (state is UserLoaded) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(state.user.name),
-                  Text(state.user.email),
-                  Text(state.user.role),
-                  Image.network(state.user.avatar),
-                ],
-              ),
-            );
+          if (state is AuthSuccess) {
+            Navigator.pop(context);
           }
+
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

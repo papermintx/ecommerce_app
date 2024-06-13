@@ -19,33 +19,33 @@ class AuthenticationBloc
     on<LoadUserData>((event, emit) async {
       emit(AuthLoading());
 
-      final token = await storage.read(key: 'token');
-      final refreshToken = await storage.read(key: 'refreshToken');
+      try {
+        final token = await storage.read(key: 'token');
+        final refreshToken = await storage.read(key: 'refreshToken');
 
-      if (token != null && refreshToken != null) {
-        final response = await http.get(
-          Uri.parse('https://api.escuelajs.co/api/v1/auth/profile'),
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        );
+        if (token != null && refreshToken != null) {
+          emit(Authenticated(token: token, refreshToken: refreshToken));
+          final response = await http.get(
+            Uri.parse('https://api.escuelajs.co/api/v1/auth/profile'),
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          );
 
-        if (response.statusCode == 200) {
-          final data = json.decode(response.body);
-          final user = UserModel.fromJson(data);
-          emit(UserLoaded(user: user));
-
-          if (kDebugMode) {
-            print(user.name);
-            print(user.email);
-            print(user.role);
-            print(user.avatar);
+          if (response.statusCode == 200) {
+            final data = json.decode(response.body);
+            final user = UserModel.fromJson(data);
+            emit(UserLoaded(user: user));
+          } else {
+            emit(AuthError(
+                message:
+                    'Server error${response.statusCode} ${response.body}'));
           }
         } else {
-          emit(AuthError(message: 'Server error 2	'));
+          emit(AuthUnauthenticated());
         }
-      } else {
-        emit(AuthError(message: 'No token'));
+      } catch (e) {
+        emit(AuthError(message: e.toString()));
       }
     });
 
@@ -63,7 +63,7 @@ class AuthenticationBloc
           final refreshToken = data['refresh_token'];
           await storage.write(key: 'token', value: token);
           await storage.write(key: 'refreshToken', value: refreshToken);
-          add(LoadUserData());
+          emit(AuthSuccess());
         } else {
           if (kDebugMode) {
             print(response.body);
@@ -71,6 +71,17 @@ class AuthenticationBloc
           }
           emit(AuthError(message: 'Server error 1'));
         }
+      } catch (e) {
+        emit(AuthError(message: e.toString()));
+      }
+    });
+
+    on<LogOut>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await storage.delete(key: 'token');
+        await storage.delete(key: 'refreshToken');
+        emit(AuthUnauthenticated());
       } catch (e) {
         emit(AuthError(message: e.toString()));
       }

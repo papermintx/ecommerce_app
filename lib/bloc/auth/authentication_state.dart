@@ -7,6 +7,10 @@ final class AuthenticationInitial extends AuthenticationState {}
 
 final class AuthLoading extends AuthenticationState {}
 
+final class AuthUnauthenticated extends AuthenticationState {}
+
+final class AuthSuccess extends AuthenticationState {}
+
 final class Authenticated extends AuthenticationState {
   final String token;
   final String refreshToken;
@@ -22,7 +26,6 @@ final class AuthError extends AuthenticationState {
     required this.message,
   });
 }
-
 
 final class UserLoaded extends AuthenticationState {
   final UserModel user;

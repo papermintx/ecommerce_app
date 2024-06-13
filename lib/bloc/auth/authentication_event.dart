@@ -11,3 +11,5 @@ class LoginRequested extends AuthenticationEvent {
 }
 
 class LoadUserData extends AuthenticationEvent {}
+
+class LogOut extends AuthenticationEvent {}

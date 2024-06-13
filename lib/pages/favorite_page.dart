@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -36,16 +38,32 @@ class _FavoritePageState extends State<FavoritePage> {
               itemCount: state.products.length,
               itemBuilder: (context, index) {
                 final product = state.products[index];
-                return ListTile(
-                  title: Text(product.title),
-                  subtitle: Text(product.description),
-                  trailing: IconButton(
-                    onPressed: () {
-                      context
-                          .read<FavoriteBloc>()
-                          .add(RemoveFavorite(product: product));
-                    },
-                    icon: const Icon(Icons.delete),
+                return Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                  child: Card(
+                    child: ListTile(
+                      leading: CachedNetworkImage(
+                        imageUrl: product.image,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                      title: Text(product.title),
+                      trailing: IconButton(
+                        onPressed: () {
+                          context
+                              .read<FavoriteBloc>()
+                              .add(RemoveFavorite(product: product));
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ),
                   ),
                 );
               },
