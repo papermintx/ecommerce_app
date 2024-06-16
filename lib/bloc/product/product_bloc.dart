@@ -67,5 +67,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             message: 'Gagal memuat data produk dari Database ${e.toString()}'));
       }
     });
+
+    on<UpdateProducts>(
+      (event, emit) async {
+        emit(ProductLoading());
+        final dbHelper = DatabaseHelper.instance;
+        await dbHelper.updateProduct(event.product);
+        add(LoadProductFromDatabase());
+      },
+    );
   }
 }

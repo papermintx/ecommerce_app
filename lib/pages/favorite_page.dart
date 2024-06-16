@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
+import 'package:e_apps/bloc/product/product_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,6 +61,8 @@ class _FavoritePageState extends State<FavoritePage> {
                           context
                               .read<FavoriteBloc>()
                               .add(RemoveFavorite(product: product));
+                          context.read<ProductBloc>().add(UpdateProducts(
+                              product.copyWith(isFavorite: false)));
                         },
                         icon: const Icon(Icons.delete),
                       ),

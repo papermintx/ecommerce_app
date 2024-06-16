@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:e_apps/models/product_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
