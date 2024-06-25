@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_apps/bloc/cart/cart_bloc.dart';
-import 'package:e_apps/bloc/checkout_bloc.dart';
+import 'package:e_apps/bloc/checkout/checkout_bloc.dart';
 import 'package:e_apps/pages/product_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,6 +1,6 @@
 import 'package:e_apps/bloc/auth/authentication_bloc.dart';
 import 'package:e_apps/bloc/cart/cart_bloc.dart';
-import 'package:e_apps/bloc/checkout_bloc.dart';
+import 'package:e_apps/bloc/checkout/checkout_bloc.dart';
 import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
 import 'package:e_apps/pages/cart_page.dart';
