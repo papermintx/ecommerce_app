@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_apps/bloc/cart/cart_bloc.dart';
 import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
 import 'package:e_apps/models/product_model.dart';
@@ -43,16 +44,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   context
                       .read<FavoriteBloc>()
                       .add(AddFavorite(product: widget.product));
-
-                  context.read<ProductBloc>().add(UpdateProducts(
-                      widget.product.copyWith(isFavorite: true)));
+                  context.read<ProductBloc>().add(LoadProductFromDatabase());
                 } else {
                   context
                       .read<FavoriteBloc>()
                       .add(RemoveFavorite(product: widget.product));
 
-                  context.read<ProductBloc>().add(UpdateProducts(
-                      widget.product.copyWith(isFavorite: false)));
+                  context.read<ProductBloc>().add(LoadProductFromDatabase());
                 }
               },
               icon: Icon(
@@ -160,7 +158,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () {
-                // Implement add to cart functionality
+                context.read<CartBloc>().add(AddToCart(widget.product));
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.only(top: 16, bottom: 16),

@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
+import 'package:e_apps/pages/product_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:ionicons/ionicons.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -24,16 +27,17 @@ class _FavoritePageState extends State<FavoritePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Favorite'),
+        title: Text(
+          'Favorite',
+          style: GoogleFonts.poppins(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: BlocBuilder<FavoriteBloc, FavoriteState>(
         builder: (context, state) {
-          if (state is FavoriteLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
           if (state is FavoriteLoaded) {
             return ListView.builder(
               itemCount: state.products.length,
@@ -44,6 +48,12 @@ class _FavoritePageState extends State<FavoritePage> {
                       EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
                   child: Card(
                     child: ListTile(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) {
+                          return ProductDetailPage(product: product);
+                        }));
+                      },
+                      contentPadding: EdgeInsets.all(8.w),
                       leading: CachedNetworkImage(
                         imageUrl: product.image,
                         width: 100,
@@ -55,7 +65,11 @@ class _FavoritePageState extends State<FavoritePage> {
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.error),
                       ),
-                      title: Text(product.title),
+                      title: Text(
+                        product.title,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(fontSize: 13),
+                      ),
                       trailing: IconButton(
                         onPressed: () {
                           context
@@ -73,13 +87,40 @@ class _FavoritePageState extends State<FavoritePage> {
             );
           }
 
-          if (state is FavoriteError) {
-            return Center(
-              child: Text(state.message),
-            );
+          if (state is FavoriteEmpty) {
+            return message('Favorite is empty', Ionicons.help_circle_outline);
           }
-          return const SizedBox.shrink();
+
+          if (state is FavoriteError) {
+            return message(state.message, Ionicons.close_circle_outline);
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
+      ),
+    );
+  }
+
+  Center message(String message, IconData icon) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: Colors.red,
+            size: 90,
+          ),
+          Text(
+            message,
+            style: GoogleFonts.poppins(
+              fontSize: 16.sp,
+              // fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -58,6 +58,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
               count: e['rating_count'],
             ),
             isFavorite: e['isFavorite'] == 1 ? true : false,
+            isCart: e['isCart'] == 1 ? true : false,
+            quantity: e['quantity'],
           );
         }).toList();
 

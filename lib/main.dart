@@ -1,6 +1,10 @@
 import 'package:e_apps/bloc/auth/authentication_bloc.dart';
+import 'package:e_apps/bloc/cart/cart_bloc.dart';
+import 'package:e_apps/bloc/checkout_bloc.dart';
 import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
+import 'package:e_apps/pages/cart_page.dart';
+import 'package:e_apps/pages/checkout_page.dart';
 import 'package:e_apps/pages/favorite_page.dart';
 import 'package:e_apps/pages/home_page.dart';
 import 'package:e_apps/pages/login_page.dart';
@@ -27,6 +31,8 @@ class MyApp extends StatelessWidget {
           create: (context) => ProductBloc(),
         ),
         BlocProvider(create: (context) => FavoriteBloc()),
+        BlocProvider(create: (context) => CartBloc()),
+        BlocProvider(create: (context) => CheckoutBloc()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
@@ -41,6 +47,8 @@ class MyApp extends StatelessWidget {
             '/favorite': (context) => const FavoritePage(),
             '/login': (context) => const LoginPage(),
             '/profilePage': (context) => const ProfilePage(),
+            '/cart': (context) => const CartPage(),
+            '/checkout': (context) => const CheckoutPage(),
           },
         ),
       ),

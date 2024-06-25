@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 class ProductModel extends Equatable {
@@ -9,6 +10,9 @@ class ProductModel extends Equatable {
   String image;
   Rating rating;
   bool isFavorite;
+  bool isCart;
+  int quantity;
+  bool isCheckout;
 
   ProductModel({
     required this.id,
@@ -19,6 +23,9 @@ class ProductModel extends Equatable {
     required this.image,
     required this.rating,
     this.isFavorite = false,
+    this.isCart = false,
+    this.quantity = 1,
+    this.isCheckout = false,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
@@ -54,6 +61,9 @@ class ProductModel extends Equatable {
     String? image,
     Rating? rating,
     bool? isFavorite,
+    bool? isCart,
+    int? quantity,
+    bool? isCheckout,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -64,6 +74,9 @@ class ProductModel extends Equatable {
       image: image ?? this.image,
       rating: rating ?? this.rating,
       isFavorite: isFavorite ?? this.isFavorite,
+      isCart: isCart ?? this.isCart,
+      quantity: quantity ?? this.quantity,
+      isCheckout: isCheckout ?? this.isCheckout,
     );
   }
 }

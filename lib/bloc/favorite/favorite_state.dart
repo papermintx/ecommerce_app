@@ -26,3 +26,5 @@ final class FavoriteError extends FavoriteState {
     required this.message,
   });
 }
+
+final class FavoriteEmpty extends FavoriteState {}
