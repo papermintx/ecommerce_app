@@ -1,3 +1,4 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
@@ -36,7 +37,20 @@ class _FavoritePageState extends State<FavoritePage> {
         ),
         centerTitle: true,
       ),
-      body: BlocBuilder<FavoriteBloc, FavoriteState>(
+      body: BlocConsumer<FavoriteBloc, FavoriteState>(
+        listener: (context, state) {
+          if (state is FavoriteError) {
+            final snackBar = awesomeSnakeBare(
+              'Error',
+              state.message,
+              ContentType.failure,
+            );
+
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(snackBar);
+          }
+        },
         builder: (context, state) {
           if (state is FavoriteLoaded) {
             return ListView.builder(
@@ -77,6 +91,16 @@ class _FavoritePageState extends State<FavoritePage> {
                               .add(RemoveFavorite(product: product));
                           context.read<ProductBloc>().add(UpdateProducts(
                               product.copyWith(isFavorite: false)));
+
+                          final snackBar = awesomeSnakeBare(
+                            'Success',
+                            'Product has been removed from favorite!',
+                            ContentType.success,
+                          );
+
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(snackBar);
                         },
                         icon: const Icon(Icons.delete),
                       ),

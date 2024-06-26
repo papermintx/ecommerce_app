@@ -1,4 +1,6 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:e_apps/bloc/auth/authentication_bloc.dart';
+import 'package:e_apps/pages/product_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -30,6 +32,15 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             onPressed: () {
               context.read<AuthenticationBloc>().add(LogOut());
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  awesomeSnakeBare(
+                    'Success',
+                    'Logout Success',
+                    ContentType.success,
+                  ),
+                );
             },
             icon: const Icon(Icons.logout),
           ),

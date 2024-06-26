@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final ProductModel product;
@@ -52,6 +53,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                   context.read<ProductBloc>().add(LoadProductFromDatabase());
                 }
+
+                final snackBar = awesomeSnakeBare(
+                  'Success',
+                  isFavorite
+                      ? 'Product has been added to favorite!'
+                      : 'Product has been removed from favorite!',
+                  ContentType.success,
+                );
+
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(snackBar);
               },
               icon: Icon(
                 isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -159,6 +172,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: ElevatedButton(
               onPressed: () {
                 context.read<CartBloc>().add(AddToCart(widget.product));
+                final snackBar = awesomeSnakeBare(
+                  'Success',
+                  'Product has been added to cart!',
+                  ContentType.success,
+                );
+
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(snackBar);
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.only(top: 16, bottom: 16),
@@ -179,4 +201,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       ),
     );
   }
+}
+
+SnackBar awesomeSnakeBare(
+    String title, String message, ContentType contentType) {
+  return SnackBar(
+    elevation: 0,
+    behavior: SnackBarBehavior.floating,
+    backgroundColor: Colors.transparent,
+    content: AwesomeSnackbarContent(
+      messageFontSize: 14.sp,
+      title: title,
+      message: message,
+      contentType: contentType,
+    ),
+  );
 }

@@ -64,6 +64,7 @@ class AuthenticationBloc
           await storage.write(key: 'token', value: token);
           await storage.write(key: 'refreshToken', value: refreshToken);
           emit(AuthSuccess());
+          return;
         } else {
           if (kDebugMode) {
             print(response.body);

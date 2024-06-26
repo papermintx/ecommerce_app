@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_apps/bloc/auth/authentication_bloc.dart';
+import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
 import 'package:e_apps/pages/product_detail_page.dart';
 import 'package:flutter/material.dart';
@@ -102,79 +103,102 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 final product = state.products[index];
 
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ProductDetailPage(product: product),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.grey.withOpacity(0.6), width: 4),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CachedNetworkImage(
-                              imageUrl: product.image,
-                              fit: BoxFit.fill,
-                              placeholder: (context, url) => const Center(
-                                child: CircularProgressIndicator(),
+                return Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProductDetailPage(product: product),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.grey.withOpacity(0.6), width: 4),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CachedNetworkImage(
+                                  imageUrl: product.image,
+                                  fit: BoxFit.fill,
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
                               ),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.w, vertical: 8.h),
-                          decoration: const BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Color.fromARGB(255, 160, 66, 177),
-                                  blurRadius: 5,
-                                  offset: Offset(0, 2)),
-                            ],
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(5),
-                                bottomRight: Radius.circular(5)),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                product.title,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 12.sp,
-                                ),
+                            const SizedBox(height: 8),
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w, vertical: 8.h),
+                              decoration: const BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color.fromARGB(255, 160, 66, 177),
+                                      blurRadius: 5,
+                                      offset: Offset(0, 2)),
+                                ],
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(5),
+                                    bottomRight: Radius.circular(5)),
                               ),
-                              Text(
-                                '\$${product.price}',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.blue,
-                                  fontSize: 10.sp,
-                                ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.title,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                  Text(
+                                    '\$${product.price}',
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.blue,
+                                      fontSize: 10.sp,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+
+                    // Add to favorite
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: IconButton(
+                        onPressed: () {
+                          context.read<FavoriteBloc>().add(
+                                AddFavorite(product: product),
+                              );
+                        },
+                        icon: Icon(
+                          product.isFavorite
+                              ? Ionicons.heart
+                              : Ionicons.heart_outline,
+                          color: product.isFavorite ? Colors.red : Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             );

@@ -1,3 +1,4 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_apps/bloc/cart/cart_bloc.dart';
 import 'package:e_apps/bloc/checkout/checkout_bloc.dart';
@@ -74,6 +75,13 @@ class _CartPageState extends State<CartPage> {
                             context
                                 .read<CartBloc>()
                                 .add(RemoveFromCart(product));
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(awesomeSnakeBare(
+                              'Success',
+                              'Product has been removed from cart!',
+                              ContentType.success,
+                            ));
                           },
                           backgroundColor: Colors.red,
                           borderRadius: BorderRadius.circular(8),
