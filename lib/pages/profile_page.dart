@@ -26,7 +26,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+
+        title:  Text('Profile', style: GoogleFonts.poppins(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),),
         centerTitle: true,
         actions: [
           IconButton(
@@ -45,6 +49,17 @@ class _ProfilePageState extends State<ProfilePage> {
             icon: const Icon(Icons.logout),
           ),
         ],
+        flexibleSpace: Container(
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:1872909426.
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF3366FF),
+                Color(0xFF00CCFF),
+              ],
+            ),
+          ),
+        ),
       ),
       body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
