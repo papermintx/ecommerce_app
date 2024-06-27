@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late bool isFavorite;
   @override
   void initState() {
     // TODO: implement initState
@@ -24,6 +25,14 @@ class _HomePageState extends State<HomePage> {
     context.read<ProductBloc>().add(LoadProductFromApi());
     context.read<AuthenticationBloc>().add(LoadUserData());
   }
+
+  List<String> favoriteList = [
+    "All",
+    "electronics",
+    "jewelery",
+    "men's clothing",
+    "women's clothing"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -91,116 +100,169 @@ class _HomePageState extends State<HomePage> {
           }
 
           if (state is ProductLoaded) {
-            return GridView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisSpacing: 8.h,
-                crossAxisSpacing: 8.w,
-                childAspectRatio: 1.6 / 1.8,
-                crossAxisCount: 2,
-              ),
-              itemCount: state.products.length,
-              itemBuilder: (context, index) {
-                final product = state.products[index];
-
-                return Stack(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetailPage(product: product),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.grey.withOpacity(0.6), width: 4),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CachedNetworkImage(
-                                  imageUrl: product.image,
-                                  fit: BoxFit.fill,
-                                  placeholder: (context, url) => const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                ),
+            return Column(
+              children: [
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: favoriteList
+                          .map(
+                            (e) => Padding(
+                              padding:
+                                   EdgeInsets.symmetric(horizontal: 4.w),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  context.read<ProductBloc>().add(
+                                        FilterProduct(
+                                          query: e,
+                                        ),
+                                      );
+                                },
+                                child: Text(e),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w, vertical: 8.h),
-                              decoration: const BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromARGB(255, 160, 66, 177),
-                                      blurRadius: 5,
-                                      offset: Offset(0, 2)),
-                                ],
-                                borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(5),
-                                    bottomRight: Radius.circular(5)),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GridView.builder(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      mainAxisSpacing: 8.h,
+                      crossAxisSpacing: 8.w,
+                      childAspectRatio: 1.6 / 1.8,
+                      crossAxisCount: 2,
+                    ),
+                    itemCount: state.products.length,
+                    itemBuilder: (context, index) {
+                      final product = state.products[index];
+
+                      return Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProductDetailPage(product: product),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey.withOpacity(0.6),
+                                    width: 4),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    product.title,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.white,
-                                      fontSize: 12.sp,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CachedNetworkImage(
+                                        imageUrl: product.image,
+                                        fit: BoxFit.fill,
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    '\$${product.price}',
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.blue,
-                                      fontSize: 10.sp,
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w, vertical: 8.h),
+                                    decoration: const BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Color.fromARGB(
+                                                255, 160, 66, 177),
+                                            blurRadius: 5,
+                                            offset: Offset(0, 2)),
+                                      ],
+                                      borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(5),
+                                          bottomRight: Radius.circular(5)),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          product.title,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.white,
+                                            fontSize: 12.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          '\$${product.price}',
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.blue,
+                                            fontSize: 10.sp,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
+                          ),
 
-                    // Add to favorite
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: IconButton(
-                        onPressed: () {
-                          context.read<FavoriteBloc>().add(
-                                AddFavorite(product: product),
-                              );
-                        },
-                        icon: Icon(
-                          product.isFavorite
-                              ? Ionicons.heart
-                              : Ionicons.heart_outline,
-                          color: product.isFavorite ? Colors.red : Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
+                          // Add to favorite
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: IconButton(
+                              onPressed: () {
+                                if (product.isFavorite == false) {
+                                  context.read<FavoriteBloc>().add(AddFavorite(
+                                      product: state.products[index]));
+                                  context
+                                      .read<ProductBloc>()
+                                      .add(LoadProductFromDatabase());
+                                } else {
+                                  context.read<FavoriteBloc>().add(
+                                      RemoveFavorite(
+                                          product: state.products[index]));
+                                  context
+                                      .read<ProductBloc>()
+                                      .add(LoadProductFromDatabase());
+                                }
+                              },
+                              icon: Icon(
+                                product.isFavorite
+                                    ? Ionicons.heart
+                                    : Ionicons.heart_outline,
+                                color: product.isFavorite
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             );
           }
           return const SizedBox.shrink();

@@ -23,3 +23,13 @@ final class ProductError extends ProductState {
     required this.message,
   });
 }
+
+
+final class CategoryLoaded extends ProductState {
+  final List<String> categories;
+  
+
+  CategoryLoaded({
+    required this.categories,
+  });
+}

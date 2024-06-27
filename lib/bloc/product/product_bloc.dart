@@ -41,7 +41,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
 
     on<LoadProductFromDatabase>((event, emit) async {
-      emit(ProductLoading());
+      // emit(ProductLoading());
       try {
         final dbHelper = DatabaseHelper.instance;
         final products = await dbHelper.queryAllProducts();
@@ -60,6 +60,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             isFavorite: e['isFavorite'] == 1 ? true : false,
             isCart: e['isCart'] == 1 ? true : false,
             quantity: e['quantity'],
+            isCheckout: e['isCheckout'] == 1 ? true : false,
           );
         }).toList();
 
@@ -72,10 +73,44 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
     on<UpdateProducts>(
       (event, emit) async {
-        emit(ProductLoading());
+        // emit(ProductLoading());
         final dbHelper = DatabaseHelper.instance;
         await dbHelper.updateProduct(event.product);
         add(LoadProductFromDatabase());
+      },
+    );
+
+    on<FilterProduct>(
+      (event, emit) async {
+        final dbHelper = DatabaseHelper.instance;
+        final products = await dbHelper.queryAllProducts();
+        if (event.query == 'All') {
+          add(LoadProductFromDatabase());
+          return;
+        }
+        List<ProductModel> data = products
+            .map((e) {
+              return ProductModel(
+                id: e['id'],
+                title: e['title'],
+                price: e['price'],
+                description: e['description'],
+                category: e['category'],
+                image: e['image'],
+                rating: Rating(
+                  rate: e['rating_rate'],
+                  count: e['rating_count'],
+                ),
+                isFavorite: e['isFavorite'] == 1 ? true : false,
+                isCart: e['isCart'] == 1 ? true : false,
+                quantity: e['quantity'],
+                isCheckout: e['isCheckout'] == 1 ? true : false,
+              );
+            })
+            .where((element) => element.category == event.query)
+            .toList();
+
+        emit(ProductLoaded(products: data));
       },
     );
   }

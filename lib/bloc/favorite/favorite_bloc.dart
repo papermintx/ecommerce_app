@@ -8,6 +8,7 @@ part 'favorite_state.dart';
 
 class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   FavoriteBloc() : super(FavoriteInitial()) {
+    
     on<LoadFavoriteFromDatabase>((event, emit) async {
       try {
         final database = DatabaseHelper.instance;
