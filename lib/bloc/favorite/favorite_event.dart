@@ -14,6 +14,18 @@ final class AddFavorite extends FavoriteEvent {
 
   const AddFavorite({
     required this.product,
+    
+  });
+
+  @override
+  List<Object> get props => [product];
+}
+
+final class UpdateFavorite extends FavoriteEvent {
+  final ProductModel product;
+
+  const UpdateFavorite({
+    required this.product,
   });
 
   @override
@@ -30,3 +42,5 @@ final class RemoveFavorite extends FavoriteEvent {
   @override
   List<Object> get props => [product];
 }
+
+

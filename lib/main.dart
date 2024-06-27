@@ -5,7 +5,6 @@ import 'package:e_apps/bloc/favorite/favorite_bloc.dart';
 import 'package:e_apps/bloc/product/product_bloc.dart';
 import 'package:e_apps/pages/cart_page.dart';
 import 'package:e_apps/pages/checkout_page.dart';
-import 'package:e_apps/pages/favorite_page.dart';
 import 'package:e_apps/pages/home_page.dart';
 import 'package:e_apps/pages/login_page.dart';
 import 'package:e_apps/pages/profile_page.dart';
@@ -44,7 +43,6 @@ class MyApp extends StatelessWidget {
           initialRoute: '/',
           routes: {
             '/': (context) => const HomePage(),
-            '/favorite': (context) => const FavoritePage(),
             '/login': (context) => const LoginPage(),
             '/profilePage': (context) => const ProfilePage(),
             '/cart': (context) => const CartPage(),

@@ -38,21 +38,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         actions: [
           IconButton(
               onPressed: () {
-                setState(() {
-                  isFavorite = !isFavorite;
-                });
-                if (isFavorite) {
-                  context
-                      .read<FavoriteBloc>()
-                      .add(AddFavorite(product: widget.product));
-                  context.read<ProductBloc>().add(LoadProductFromDatabase());
-                } else {
-                  context
-                      .read<FavoriteBloc>()
-                      .add(RemoveFavorite(product: widget.product));
+                context
+                    .read<FavoriteBloc>()
+                    .add(UpdateFavorite(product: widget.product));
 
-                  context.read<ProductBloc>().add(LoadProductFromDatabase());
-                }
+                context.read<ProductBloc>().add(LoadProductFromDatabase());
 
                 final snackBar = awesomeSnakeBare(
                   'Success',
@@ -65,6 +55,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(snackBar);
+
+                setState(() {
+                  isFavorite = !isFavorite;
+                });
               },
               icon: Icon(
                 isFavorite ? Icons.favorite : Icons.favorite_border,

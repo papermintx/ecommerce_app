@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:e_apps/database/product_databas_helper.dart';
@@ -10,108 +11,107 @@ part 'product_state.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ProductBloc() : super(ProductInitial()) {
-    on<LoadProductFromApi>(
-      (event, emit) async {
-        emit(ProductLoading());
-        try {
-          final response =
-              await http.get(Uri.parse('https://fakestoreapi.com/products'));
+    on<LoadProductFromApi>(loadProductFromAPI);
+    on<LoadProductFromDatabase>(loadProductFromDatabase);
+    on<UpdateProducts>(updateProducts);
+    on<FilterProduct>(filterProducts);
+  }
 
-          if (response.statusCode == 200) {
-            final data = json.decode(response.body);
-            final List<ProductModel> products = List<ProductModel>.from(
-                data.map((i) => ProductModel.fromJson(i)));
+  FutureOr<void> filterProducts(event, emit) async {
+    final dbHelper = DatabaseHelper.instance;
+    final products = await dbHelper.queryAllProducts();
+    if (event.query == 'All') {
+      add(LoadProductFromDatabase());
+      return;
+    }
 
-            final dbHelper = DatabaseHelper.instance;
+    if (event.query == 'Favorite') {
+      List<ProductModel> data = products
+          .map((e) {
+            return ProductModel.fromMap(e);
+          })
+          .where((element) => element.isFavorite)
+          .toList();
 
-            for (var product in products) {
-              dbHelper.insertProduct(product);
-            }
+      emit(ProductLoaded(products: data));
+      return;
+    }
 
-            emit(LoadProductFromApiSucces());
-            add(LoadProductFromDatabase());
-          } else {
-            emit(ProductError(message: 'Server error ${response.statusCode}'));
-          }
-        } catch (e) {
-          emit(ProductError(
-              message: 'Gagal memuat data produk dari API${e.toString()}'));
-        }
-      },
-    );
+    List<ProductModel> data = products
+        .map((e) {
+          return ProductModel.fromMap(e);
+        })
+        .where((element) => element.category == event.query)
+        .toList();
 
-    on<LoadProductFromDatabase>((event, emit) async {
-      // emit(ProductLoading());
-      try {
-        final dbHelper = DatabaseHelper.instance;
-        final products = await dbHelper.queryAllProducts();
-        List<ProductModel> data = products.map((e) {
-          return ProductModel(
-            id: e['id'],
-            title: e['title'],
-            price: e['price'],
-            description: e['description'],
-            category: e['category'],
-            image: e['image'],
-            rating: Rating(
-              rate: e['rating_rate'],
-              count: e['rating_count'],
-            ),
-            isFavorite: e['isFavorite'] == 1 ? true : false,
-            isCart: e['isCart'] == 1 ? true : false,
-            quantity: e['quantity'],
-            isCheckout: e['isCheckout'] == 1 ? true : false,
-          );
-        }).toList();
+    emit(ProductLoaded(products: data));
+  }
 
-        emit(ProductLoaded(products: data));
-      } catch (e) {
-        emit(ProductError(
-            message: 'Gagal memuat data produk dari Database ${e.toString()}'));
+  FutureOr<void> updateProducts(event, emit) async {
+    // emit(ProductLoading());
+    final dbHelper = DatabaseHelper.instance;
+    await dbHelper.updateProduct(event.product);
+    add(LoadProductFromDatabase(query: event.product.category));
+  }
+
+  FutureOr<void> loadProductFromDatabase(event, emit) async {
+    // emit(ProductLoading());
+    try {
+      final dbHelper = DatabaseHelper.instance;
+      final products = await dbHelper.queryAllProducts();
+      List<ProductModel> data = products.map((e) {
+        return ProductModel.fromMap(e);
+      }).toList();
+      if (event.query == "Favorite") {
+        add(FilterProduct(query: "Favorite"));
       }
-    });
+      if (event.query == "All") {
+        emit(ProductLoaded(products: data));
+        return;
+      }
 
-    on<UpdateProducts>(
-      (event, emit) async {
-        // emit(ProductLoading());
-        final dbHelper = DatabaseHelper.instance;
-        await dbHelper.updateProduct(event.product);
-        add(LoadProductFromDatabase());
-      },
-    );
-
-    on<FilterProduct>(
-      (event, emit) async {
-        final dbHelper = DatabaseHelper.instance;
-        final products = await dbHelper.queryAllProducts();
-        if (event.query == 'All') {
-          add(LoadProductFromDatabase());
-          return;
-        }
-        List<ProductModel> data = products
+      if (event.query != null) {
+        data = products
             .map((e) {
-              return ProductModel(
-                id: e['id'],
-                title: e['title'],
-                price: e['price'],
-                description: e['description'],
-                category: e['category'],
-                image: e['image'],
-                rating: Rating(
-                  rate: e['rating_rate'],
-                  count: e['rating_count'],
-                ),
-                isFavorite: e['isFavorite'] == 1 ? true : false,
-                isCart: e['isCart'] == 1 ? true : false,
-                quantity: e['quantity'],
-                isCheckout: e['isCheckout'] == 1 ? true : false,
-              );
+              return ProductModel.fromMap(e);
             })
             .where((element) => element.category == event.query)
             .toList();
+      }
 
-        emit(ProductLoaded(products: data));
-      },
-    );
+      emit(ProductLoaded(products: data));
+    } catch (e) {
+      emit(ProductError(
+          message: 'Gagal memuat data produk dari Database ${e.toString()}'));
+    }
+  }
+
+  FutureOr<void> loadProductFromAPI(event, emit) async {
+    // emit(ProductLoading());
+    try {
+      final response =
+          await http.get(Uri.parse('https://fakestoreapi.com/products'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        List<ProductModel> products = data.map((e) {
+          return ProductModel.fromJson(e);
+        }).toList();
+
+        final dbHelper = DatabaseHelper.instance;
+
+        for (var product in products) {
+          dbHelper.insertProduct(product);
+        }
+
+        emit(LoadProductFromApiSucces());
+        add(LoadProductFromDatabase());
+      } else {
+        emit(ProductError(message: 'Server error ${response.statusCode}'));
+      }
+    } catch (e) {
+      emit(ProductError(
+          message: 'Gagal memuat data produk dari API${e.toString()}'));
+    }
   }
 }

@@ -4,7 +4,11 @@ part of 'product_bloc.dart';
 @immutable
 sealed class ProductEvent {}
 
-class LoadProductFromDatabase extends ProductEvent {}
+class LoadProductFromDatabase extends ProductEvent {
+  String? query;
+
+  LoadProductFromDatabase({this.query});
+}
 
 class LoadProductFromApi extends ProductEvent {}
 
@@ -17,8 +21,7 @@ class UpdateProducts extends ProductEvent {
 class FilterProduct extends ProductEvent {
   final String query;
 
-  FilterProduct(
-     {
+  FilterProduct({
     required this.query,
   });
 }

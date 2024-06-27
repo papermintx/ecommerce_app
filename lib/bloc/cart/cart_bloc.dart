@@ -53,24 +53,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       try {
         final database = DatabaseHelper.instance;
         final products = await database.queryAllProducts();
-        final List<ProductModel> data = products
-            .map((e) => ProductModel(
-                  id: e['id'],
-                  title: e['title'],
-                  price: e['price'],
-                  description: e['description'],
-                  category: e['category'],
-                  image: e['image'],
-                  rating: Rating(
-                    rate: e['rating_rate'],
-                    count: e['rating_count'],
-                  ),
-                  isFavorite: e['isFavorite'] == 1,
-                  isCart: e['isCart'] == 1,
-                  quantity: e['quantity'],
-                  isCheckout: e['isCheckout'] == 1,
-                ))
-            .toList();
+        final List<ProductModel> data =
+            products.map((e) => ProductModel.fromMap(e)).toList();
 
         final cart = data.where((e) => e.isCart).toList();
 
@@ -89,9 +73,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final database = DatabaseHelper.instance;
 
         if (event.quantity <= 0) {
-          // await database.updateProduct(
-          //     event.product.copyWith(isCart: false, quantity: 1));
-          // add(LoadCartFromDatabase());
           return;
         }
         await database

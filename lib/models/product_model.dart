@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:equatable/equatable.dart';
 
-class ProductModel extends Equatable {
+
+class ProductModel {
   int id;
   String title;
   double price;
@@ -27,30 +26,6 @@ class ProductModel extends Equatable {
     this.quantity = 1,
     this.isCheckout = false,
   });
-
-  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
-        id: json["id"],
-        title: json["title"],
-        price: json["price"]?.toDouble(),
-        description: json["description"],
-        category: json["category"],
-        image: json["image"],
-        rating: Rating.fromJson(json["rating"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "price": price,
-        "description": description,
-        "category": category,
-        "image": image,
-        "rating": rating.toJson(),
-      };
-
-  @override
-  List<Object?> get props =>
-      [id, title, price, description, category, image, rating];
 
   ProductModel copyWith({
     int? id,
@@ -79,6 +54,52 @@ class ProductModel extends Equatable {
       isCheckout: isCheckout ?? this.isCheckout,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'title': title,
+      'price': price,
+      'description': description,
+      'category': category,
+      'image': image,
+      'rating_rate': rating.rate,
+      'rating_count': rating.count,
+      'isFavorite': isFavorite,
+      'isCart': isCart,
+      'quantity': quantity,
+      'isCheckout': isCheckout,
+    };
+  }
+
+  factory ProductModel.fromMap(Map<String, dynamic> map) {
+    return ProductModel(
+      id: map['id'],
+      title: map['title'],
+      price: map['price'],
+      description: map['description'],
+      category: map['category'],
+      image: map['image'],
+      rating: Rating(
+        rate: map['rating_rate'],
+        count: map['rating_count'],
+      ),
+      isFavorite: map['isFavorite'] == 1 ? true : false,
+      isCart: map['isCart'] == 1 ? true : false,
+      quantity: map['quantity'],
+      isCheckout: map['isCheckout'] == 1 ? true : false,
+    );
+  }
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
+        id: json["id"],
+        title: json["title"],
+        price: json["price"].toDouble(),
+        description: json["description"],
+        category: json["category"],
+        image: json["image"],
+        rating: Rating.fromJson(json["rating"]),
+      );
 }
 
 class Rating {
